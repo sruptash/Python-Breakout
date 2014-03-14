@@ -1,0 +1,54 @@
+* Project Title:  Breakout! Arcade game made in Python
+* Project Team:   Scott Ruptash & Evan Doroshuk
+
+
+* Description:
+    We intend to port a replica of the breakout arcade game from arduino
+    to python, a project from last semester. The player controls
+    the paddle at the bottom using a mouse and/or keyboard arrows, 
+    and must eliminate all colored rows of bricks with only 3 lives.
+    The ball will speed up at certain intervals, change angles depending on
+    where the ball lands on the paddle, and will shrink in size when breaking
+    through different colored layers of bricks. A player score will be
+    displayed during play. In addition to this functionality, we will
+    add powerups (more balls, lasers, paddle growing/shrinking), as well
+    as more levels. A highscore will be saved to an external file, which
+    upon reading would show a leaderboard.
+    
+
+* Milestones:
+    1. Since this project has already been implemented in Arduino, we will
+       now try to port it over to the python language, using pygame to
+       represent the graphics. For this milestone, just translate the draw
+       commands so that sprites are shown on-screen for the respective bricks,
+       ball, and paddle.
+       
+    2. This milestone will be part 2 of porting. This one will focus on porting
+       the code responsible for game functionality. Make sure the keyboard and
+       mouse are now used for controlling the game. Once this step is complete,
+       we should have a basic functioning game.
+       
+    3. This milestone will focus on adding powerups and new levels to the game.
+       We will need to make the menus in place more complex to accommodate 
+       additional settings and new levels. As for the powerups, this requires
+       more backend coding, and a randomizer that embeds powerups in different
+       bricks for each level. The functionality of each powerup could also be
+       different (more balls, lasers, etc.) and this will need additional coding.
+       
+    4. If we have time, we will have functionality in place for a leaderboard, and
+       saving of highscore to an external file. We may also try to spruce up the game
+       graphics-wise (ie give bricks shading and complex design, different backgrounds),
+       and also make it so that bricks take multiple hits to break (each hit showing
+       a bigger crack on brick).
+           
+       
+* Delivery & Demonstration:
+    We will of course demonstrate the game and not only show that it
+    is fun to play, but is also a successful port from the
+    arduino platform.
+    
+    An instructions file (howto.txt) will be included to show how
+    to play the game, as well as how to set up the computer so that
+    all the right dependencies are installed.
+    
+    
