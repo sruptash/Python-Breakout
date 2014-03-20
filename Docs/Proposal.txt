@@ -26,7 +26,11 @@
     2. This milestone will be part 2 of porting. This one will focus on porting
        the code responsible for game functionality. Make sure the keyboard and
        mouse are now used for controlling the game. Once this step is complete,
-       we should have a basic functioning game.
+       we should have a basic functioning game. The ball will speed up at certain
+       intervals, the paddle will shrink once breaking through the top-most layer,
+       and the angle of the ball will change depending on where it hits the paddle.
+       There will also be 3 difficulty settings, and the scoring will change for
+       each one.
        
     3. This milestone will focus on adding powerups and new levels to the game.
        We will need to make the menus in place more complex to accommodate 
@@ -34,6 +38,16 @@
        more backend coding, and a randomizer that embeds powerups in different
        bricks for each level. The functionality of each powerup could also be
        different (more balls, lasers, etc.) and this will need additional coding.
+       We will try to add at least 5 levels, and also add powerups for 3 balls,
+       growing the paddle, shooting lasers from the paddle, and extra lives. There will
+       also be powerdowns for shrinking the paddle, losing a life, and losing score.
+       These powerups/downs will float down to the paddle for the user to pick up. In
+       terms of making it different from other versions of breakout, we will make each
+       level a different orientation for the user (ie level 2 tilted 90 degrees, level 3
+       flipped 180, etc). The 5th level will change orientation constantly, triggered either
+       by the ball(s) hitting the paddle, or have it rotate smoothly all the time.
+       This will of course add to the challenge of the game, varying with each difficulty
+       level.
        
     4. If we have time, we will have functionality in place for a leaderboard, and
        saving of highscore to an external file. We may also try to spruce up the game
