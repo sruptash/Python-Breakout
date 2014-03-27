@@ -24,6 +24,10 @@ class BreakoutMain:
                     pygame.quit()
                     sys.exit()
 
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        pygame.event.post(pygame.event.Event(QUIT))
+
         pygame.display.update()
         self.clock.tick(60)
 
