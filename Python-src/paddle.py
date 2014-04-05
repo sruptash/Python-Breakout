@@ -3,6 +3,8 @@ import pygame
 from pygame.locals import *
 from loaders import *
 
+import ball
+
 
 class Paddle(pygame.sprite.Sprite):
     """
@@ -11,7 +13,7 @@ class Paddle(pygame.sprite.Sprite):
     The paddle will have 5 sizes, identified as a number from 1 - 5. Normal size is
     3.
 
-    The paddle can only move left or right (or up/down, depending on the orientation of the level),
+    The paddle can only move on one axis (left/right, or up/down)
     and has a fixed speed that does not change.
     """
 
@@ -20,28 +22,43 @@ class Paddle(pygame.sprite.Sprite):
 
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('paddle.png', -1)
+        self.image, self.rect = load_image('bigPaddle.png', -1)
 
         # The starting size for our paddle.
         # Height will always remain 8
-        #self.width = 28
-        #self.height = 8
+        self.width = self.rect.width
+        self.height = self.rect.height
 
         # The speed of the paddle
-        self.speed = 5
+        self.speed = 15
 
+        # Initial position
+        self.x = width / 2
+        self.y = height - 20
+        self.rect.centerx = self.x
+        self.rect.centery = self.y
 
     # Moves the paddle when arrow key left/right are pushed
-    def move(self, key):
-
-        xMove = 0
-        yMove = 0
+    def move(self, key, width, height, ball):
+        """
+        Key presses will change depending on orientation of the screen.
+        Orientation will vary from level to level, so key presses should change
+        accordingly. This function also makes sure the paddle does not move
+        off the screen
+        """
 
         if (key == K_RIGHT):
-            xMove = self.speed
+            self.x += self.speed
+            if self.x > (width - (self.width / 2)):
+                self.x = width - (self.width / 2)
+
+            self.rect.centerx = self.x
+            ball.move(self.x)
 
         elif (key == K_LEFT):
-            xMove = -self.speed
+            self.x -= self.speed
+            if self.x < (0 + (self.width / 2)):
+                self.x = 0 + (self.width / 2)
 
-        # Move sprite
-        self.rect.move_ip(xMove, yMove)
+            self.rect.centerx = self.x
+            ball.move(self.x)
