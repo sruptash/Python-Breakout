@@ -21,7 +21,6 @@ class BreakoutMain:
         Initialize a new window using pygame, with a specified w and h.
         Set the caption as well.
         """
-
         pygame.init()
 
         self.width = width
@@ -36,6 +35,9 @@ class BreakoutMain:
         are the paddle, balls, bricks, powerups/powerdowns, etc.
         """
 
+        # level
+        #self.level = Level('level1')
+
         # paddle
         self.paddle = Paddle(self.width, self.height)
         self.paddleSprites = pygame.sprite.RenderPlain(self.paddle)
@@ -43,6 +45,7 @@ class BreakoutMain:
         # ball
         self.ball = Ball(self.paddle.height, (self.paddle.x, self.paddle.y))
         self.ballSprites = pygame.sprite.RenderPlain(self.ball)
+
 
     # Loop function
     def loop(self):
@@ -79,6 +82,9 @@ class BreakoutMain:
                             event.key == K_UP or
                             event.key == K_DOWN):
                         self.paddle.move(event.key, self.width, self.height, self.ball)
+
+                # Collision detection
+                """TODO"""
 
                 # Redraw background
                 self.screen.blit(self.background, (0, 0))

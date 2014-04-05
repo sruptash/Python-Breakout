@@ -3,21 +3,24 @@ import pygame
 from pygame.locals import *
 from loaders import *
 
+from brick import Brick
 
 
 
-class Brick(pygame.sprite.Sprite):
+
+class Level(pygame.sprite.Sprite):
     """
-    Defines a brick and its characteristics. This class will be used
-    in conjunction with a level loader to load multiple bricks to the screen.
-
-    The brick will be defined by position, color, and whether or not it has a powerup
+    Class used to define the current level that is being played.
+    This class will also be used to define the menu (aka level 0)
+    on startup.
     """
 
-    # Initialize the brick
-    def __init__(self, x, y, color, powerup=None):
+    # Initialize the level
+    def __init__(self, level):
         """
-        Initialize the brick sprite and position.
+        Initialize the level. If 'level0', then Initialize the menu.
+
+        This function will return a list of bricks onscreen, as well as a background.
         """
 
         # The sprite to load
