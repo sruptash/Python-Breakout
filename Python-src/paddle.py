@@ -20,30 +20,28 @@ class Paddle(pygame.sprite.Sprite):
 
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('Media/paddle.png', -1)
+        self.image, self.rect = load_image('paddle.png', -1)
 
         # The starting size for our paddle.
         # Height will always remain 8
-        self.width = 28
-        self.height = 8
+        #self.width = 28
+        #self.height = 8
 
         # The speed of the paddle
         self.speed = 5
-
-        # The starting position of the paddle
-        self.x = (width / 2) - 14
-        self.y = height - 8
-        self.rect.move(self.x, self.y)
 
 
     # Moves the paddle when arrow key left/right are pushed
     def move(self, key):
 
+        xMove = 0
+        yMove = 0
+
         if (key == K_RIGHT):
-            self.x += self.speed
+            xMove = self.speed
 
         elif (key == K_LEFT):
-            self.x -= self.speed
+            xMove = -self.speed
 
         # Move sprite
-        self.rect.move(self.x, self.y)
+        self.rect.move_ip(xMove, yMove)

@@ -3,8 +3,8 @@ import pygame
 from paddle import Paddle
 from pygame.locals import *
 
-if not pygame.font: print 'Warning, fonts disabled'
-if not pygame.mixer: print 'Warning, sound disabled'
+if not pygame.font: print("Warning, fonts disabled")
+if not pygame.mixer: print("Warning, sound disabled")
 
 
 class BreakoutMain:
@@ -14,7 +14,7 @@ class BreakoutMain:
     """
 
     # Initialization function
-    def __init__(self, width=640, height=480):
+    def __init__(self, width=800, height=600):
         """
         Initialize a new window using pygame, with a specified w and h.
         Set the caption and tick rate.
@@ -26,7 +26,6 @@ class BreakoutMain:
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Breakout!')
-        self.clock = pygame.time.Clock()
 
     # Used to load sprites to the screen
     def loadSprites(self):
@@ -36,8 +35,8 @@ class BreakoutMain:
         """
 
         # paddle
-        self.paddle = Paddle.paddle(self.width, self.height)
-        self.paddleSprite = pygame.sprite.RenderPlain((self.paddle))
+        self.paddle = Paddle(self.width, self.height)
+        self.paddleSprites = pygame.sprite.RenderPlain(self.paddle)
 
     # Loop function
     def loop(self):
@@ -49,6 +48,14 @@ class BreakoutMain:
         # Load our sprites
         self.loadSprites()
 
+        # Set key repeat on
+        pygame.key.set_repeat(5, 10)
+
+        # Create background
+        self.background = pygame.Surface(self.screen.get_size())
+        self.background = self.background.convert()
+        self.background.fill((0,0,0))
+
         while 1:
             for event in pygame.event.get():
                 # Window 'X' clicked
@@ -56,22 +63,22 @@ class BreakoutMain:
                     pygame.quit()
                     sys.exit()
 
-                # Escape Key
-                elif event.type == KEYDOWN:
+                # Keys pressed
+                if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         pygame.event.post(pygame.event.Event(QUIT))
 
-                    if ((event.key == K_RIGHT)
-                            or (event.key == K_LEFT)):
+                    if event.key == K_LEFT or event.key == K_RIGHT:
                         self.paddle.move(event.key)
 
-        # Redraw sprites
-        self.snake_sprites.draw(self.screen)
-        pygame.display.flip()
+                # Redraw background
+                self.screen.blit(self.background, (0, 0))
 
-        # Update screen at 60 frames per second
-        pygame.display.update()
-        self.clock.tick(60)
+                # Redraw sprites
+                self.paddleSprites.draw(self.screen)
+                pygame.display.flip()
+
+
 
 
 # Start the game

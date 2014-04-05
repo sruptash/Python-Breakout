@@ -6,15 +6,15 @@ from pygame.locals import *
 # Loads the specified image
 def load_image(name, colorkey=None):
 
-    fullname = os.path.join('data', name)
+    fullname = os.path.join('Media', name)
 
     try:
         image = pygame.image.load(fullname)
 
-    except pygame.error, message:
+    except pygame.error:
 
-        print 'Cannot load image:', name
-        raise SystemExit(message)
+        print('Cannot load image: ' + name)
+        sys.exit(-1)
 
     image = image.convert()
 
