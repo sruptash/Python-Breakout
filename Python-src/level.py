@@ -20,20 +20,10 @@ class Level(pygame.sprite.Sprite):
         """
         Initialize the level. If 'level0', then Initialize the menu.
 
-        This function will return a list of bricks onscreen, as well as a background.
+        This function will house a list/group of brick sprites, as well
+        as the background sprite.
         """
 
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('bricks/' + color + 'Brick.png', -1)
-
-        # Brick initial position
-        self.rect.x = x
-        self.rect.y = y
-
-        # Powerup embedded in brick
-        if powerup == None:
-            self.powerup = None
-
-        else:
-            self.powerup = powerup
+        self.background, self.backgroundRect = load_image('levels/' + level + '/background.png', -1)

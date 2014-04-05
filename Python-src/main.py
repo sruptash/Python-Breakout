@@ -4,6 +4,7 @@ from pygame.locals import *
 
 from paddle import Paddle
 from ball import Ball
+from level import Level
 
 if not pygame.font: print("Warning, fonts disabled")
 if not pygame.mixer: print("Warning, sound disabled")
@@ -36,7 +37,7 @@ class BreakoutMain:
         """
 
         # level
-        #self.level = Level('level1')
+        self.level = Level('level1')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
@@ -60,11 +61,6 @@ class BreakoutMain:
         # Set key repeat on
         pygame.key.set_repeat(5, 20)
 
-        # Create background
-        self.background = pygame.Surface(self.screen.get_size())
-        self.background = self.background.convert()
-        self.background.fill((0, 0, 0))
-
         while 1:
             for event in pygame.event.get():
                 # Window 'X' clicked
@@ -87,7 +83,7 @@ class BreakoutMain:
                 """TODO"""
 
                 # Redraw background
-                self.screen.blit(self.background, (0, 0))
+                self.screen.blit(self.level.background, (0, 0))
 
                 # Redraw sprites
                 self.paddleSprites.draw(self.screen)
