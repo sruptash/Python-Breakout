@@ -5,6 +5,7 @@ from pygame.locals import *
 from paddle import Paddle
 from ball import Ball
 from level import Level
+from loaders import *
 
 if not pygame.font: print("Warning, fonts disabled")
 if not pygame.mixer: print("Warning, sound disabled")
@@ -37,11 +38,11 @@ class BreakoutMain:
         """
 
         # level
-        self.level = Level('level1')
+        self.background = loadLevel('level1')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
-        self.paddleSprites = pygame.sprite.RenderPlain(self.paddle)
+        self.paddleSprite = pygame.sprite.RenderPlain(self.paddle)
 
         # ball
         self.ball = Ball(self.paddle.height, (self.paddle.x, self.paddle.y))
@@ -61,7 +62,10 @@ class BreakoutMain:
         # Set key repeat on
         pygame.key.set_repeat(5, 20)
 
+        pygame.display.update()
+
         while 1:
+
             for event in pygame.event.get():
                 # Window 'X' clicked
                 if event.type == pygame.QUIT:
@@ -70,7 +74,7 @@ class BreakoutMain:
 
                 # Keys pressed
                 if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                    if event.key == K_ESCAPE or event.key == K_q:
                         pygame.event.post(pygame.event.Event(QUIT))
 
                     if (event.key == K_LEFT or
@@ -79,16 +83,16 @@ class BreakoutMain:
                             event.key == K_DOWN):
                         self.paddle.move(event.key, self.width, self.height, self.ball)
 
-                # Collision detection
-                """TODO"""
+            # Collision detection
+            """TODO"""
 
-                # Redraw background
-                self.screen.blit(self.level.background, (0, 0))
+            # Redraw background
+            self.screen.blit(self.background, (0, 0))
 
-                # Redraw sprites
-                self.paddleSprites.draw(self.screen)
-                self.ballSprites.draw(self.screen)
-                pygame.display.flip()
+            # Redraw sprites
+            self.paddleSprite.draw(self.screen)
+            self.ballSprites.draw(self.screen)
+            pygame.display.update()
 
 
 # Start the game

@@ -25,3 +25,11 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey, RLEACCEL)
 
     return image, image.get_rect()
+
+
+# Loads a specified level
+def loadLevel(level):
+    background = pygame.image.load('media/levels/level1/background.png')
+    background = background.convert()
+
+    return background

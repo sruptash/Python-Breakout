@@ -23,6 +23,7 @@ class Brick(pygame.sprite.Sprite):
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image('bricks/' + color + 'Brick.png', -1)
+        self.image.convert()
 
         # Brick initial position
         self.rect.x = x

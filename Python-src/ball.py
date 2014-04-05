@@ -32,6 +32,7 @@ class Ball(pygame.sprite.Sprite):
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image('balls/ball.png', -1)
+        self.image.convert()
 
         # The size of a ball
         self.width = self.rect.width
@@ -54,7 +55,7 @@ class Ball(pygame.sprite.Sprite):
         self.onPaddle = True
 
     # Move ball
-    def move(self, paddleX):
+    def move(self, paddleX=None):
         """
         If ball is on the paddle, move ball according to
         paddle position.

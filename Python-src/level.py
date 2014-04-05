@@ -8,7 +8,7 @@ from brick import Brick
 
 
 
-class Level(pygame.sprite.Sprite):
+class Level():
     """
     Class used to define the current level that is being played.
     This class will also be used to define the menu (aka level 0)
@@ -24,6 +24,6 @@ class Level(pygame.sprite.Sprite):
         as the background sprite.
         """
 
-        # The sprite to load
-        pygame.sprite.Sprite.__init__(self)
-        self.background, self.backgroundRect = load_image('levels/' + level + '/background.png', -1)
+        # Load background
+        self.background, self.rect = load_image('levels/' + level + '/background.png', -1)
+        self.background.convert()
