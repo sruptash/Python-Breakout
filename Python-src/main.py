@@ -6,6 +6,7 @@ from pygame.locals import *
 
 class BreakoutMain:
     """
+    
     This class is instantiated upon the game being launched.
     This houses information on width, height, and tick rate.
     """
