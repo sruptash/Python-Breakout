@@ -38,7 +38,7 @@ class BreakoutMain:
         """
 
         # level
-        self.background = loadLevel('level1')
+        self.level = Level('level1')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
@@ -61,8 +61,6 @@ class BreakoutMain:
 
         # Set key repeat on
         pygame.key.set_repeat(5, 20)
-
-        pygame.display.update()
 
         while 1:
 
@@ -87,7 +85,7 @@ class BreakoutMain:
             """TODO"""
 
             # Redraw background
-            self.screen.blit(self.background, (0, 0))
+            self.screen.blit(self.level.background, (0, 0))
 
             # Redraw sprites
             self.paddleSprite.draw(self.screen)

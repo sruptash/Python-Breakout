@@ -25,5 +25,6 @@ class Level():
         """
 
         # Load background
-        self.background, self.rect = load_image('levels/' + level + '/background.png', -1)
-        self.background.convert()
+        self.background, self.rect = load_image('levels/' + level + '/background.png', None)
+
+        # Load bricks
