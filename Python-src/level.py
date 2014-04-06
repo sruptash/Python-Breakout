@@ -6,8 +6,6 @@ from loaders import *
 from brick import Brick
 
 
-
-
 class Level():
     """
     Class used to define the current level that is being played.
@@ -23,8 +21,17 @@ class Level():
         This function will house a list/group of brick sprites, as well
         as the background sprite.
         """
+        # Name of level
+        self.name = level
 
         # Load background
         self.background, self.rect = load_image('levels/' + level + '/background.png', None)
 
         # Load bricks
+        self.brickSprites = pygame.sprite.Group()
+
+        brickFile = open('media/levels/' + level + '/layout.lvl', 'r')
+        for line in brickFile:
+            brickInfo = line.split()
+            brick = Brick(int(brickInfo[1]), int(brickInfo[2]), brickInfo[0])
+            self.brickSprites.add(brick)

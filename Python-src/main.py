@@ -90,6 +90,7 @@ class BreakoutMain:
             # Redraw sprites
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)
+            self.level.brickSprites.draw(self.screen)
             pygame.display.update()
 
 
