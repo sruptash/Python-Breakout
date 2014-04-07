@@ -6,10 +6,8 @@ from pygame.locals import *
 # Loads the specified image
 def load_image(name, colorkey=None):
 
-    fullname = os.path.join('media', name)
-
     try:
-        image = pygame.image.load(fullname)
+        image = pygame.image.load(name)
 
     except pygame.error:
 

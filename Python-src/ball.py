@@ -31,7 +31,7 @@ class Ball(pygame.sprite.Sprite):
 
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('balls/ball.png', -1)
+        self.image, self.rect = load_image('media/balls/ball.png', -1)
 
         # The size of a ball
         self.width = self.rect.width
