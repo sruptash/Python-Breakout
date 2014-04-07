@@ -9,9 +9,10 @@ def load_image(name, colorkey=None):
     try:
         image = pygame.image.load(name)
 
-    except pygame.error:
+    except pygame.error as message:
 
         print('Cannot load image: ' + name)
+        print(message)
         sys.exit(-1)
 
     image = image.convert()
