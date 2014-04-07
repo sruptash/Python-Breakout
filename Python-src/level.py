@@ -25,7 +25,7 @@ class Level():
         self.name = level
 
         # Load background
-        self.background, self.rect = load_image('levels/' + level + '/background.png', None)
+        self.background, self.rect = load_image('levels/' + level + '/background.png')
 
         # Load bricks
         self.brickSprites = pygame.sprite.Group()
