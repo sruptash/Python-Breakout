@@ -61,9 +61,6 @@ class BreakoutMain:
                              self.paddle.height)
         self.ballSprites = pygame.sprite.RenderPlain(self.mainBall)
 
-        # used to store rects that need updating
-        self.dirty_rects = pygame.sprite.Group()
-
     # MAIN LOOP FUNCTION
     def loop(self):
         """
@@ -75,7 +72,7 @@ class BreakoutMain:
         self.loadSprites()
 
         # Set key repeat on
-        pygame.key.set_repeat(5, 20)
+        pygame.key.set_repeat(5, 10)
 
         # Draw background to screen initially
         self.screen.blit(self.level.background, (0, 0))
@@ -127,12 +124,24 @@ class BreakoutMain:
                 for ball in self.ballSprites:
                     ball.move(self.width, self.height, seconds)
 
-            # Collision detection (balls and objects)
-            hitPaddle = pygame.sprite.spritecollide(self.paddle, self.ballSprites, False)
-
+            # Collision detection between ball and paddle
+            hitPaddle = pygame.sprite.spritecollide(self.paddle,
+                                                    self.ballSprites,
+                                                    False)
             if hitPaddle:
                 for ball in hitPaddle:
                     ball.paddleCollide(self.paddle)
+
+            # Collision detection between ball and brick
+            for ball in self.ballSprites:
+                hitBricks = pygame.sprite.spritecollide(ball,
+                                                        self.level.brickSprites,
+                                                        True)
+                ball.brickCollide(hitBricks)
+                for brick in hitBricks:
+                    self.screen.blit(self.level.background,
+                                     (brick.rect.x, brick.rect.y),
+                                     brick.rect)
 
             # Redraw sprites
             self.paddleSprite.draw(self.screen)

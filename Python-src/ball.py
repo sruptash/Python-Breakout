@@ -41,7 +41,8 @@ class Ball(pygame.sprite.Sprite):
         self.height = self.rect.height
 
         # Initial ball speed
-        self.speed = 300.0
+        self.xSpeed = 150.0
+        self.ySpeed = 250.0
 
         # Initial ball direction
         self.xDir = 0.0
@@ -88,8 +89,8 @@ class Ball(pygame.sprite.Sprite):
                 self.yDir = - self.yDir
 
             # Set ball trajectory
-            self.x += self.xDir * (self.speed * seconds)
-            self.y += self.yDir * (self.speed * seconds)
+            self.x += self.xDir * (self.xSpeed * seconds)
+            self.y += self.yDir * (self.ySpeed * seconds)
 
             # Assign to actual rect
             self.rect.centerx = self.x
@@ -102,6 +103,7 @@ class Ball(pygame.sprite.Sprite):
         """
         self.onPaddle = False
         self.yDir = -1.0
+        self.xDir = 0.2
         self.y -= 1
         self.rect.centery = self.y
 
@@ -116,7 +118,6 @@ class Ball(pygame.sprite.Sprite):
         of reflection depending on the initial xDir.
         Regardless, the yDir is the additive inverse upon collision.
         """
-
         if self.x != paddle.x:
             ballDist = self.x - paddle.rect.centerx
             percent = ballDist / (paddle.width / 2)
@@ -130,6 +131,53 @@ class Ball(pygame.sprite.Sprite):
 
         # Always set y direction to negative inverse after paddle collide
         self.setYDirection(-self.yDir)
+
+    # Ball collision with a brick
+    def brickCollide(self, bricks):
+        """
+        Ball will bounce and change directory based on what side
+        it has hit a brick on.
+
+        Hitting the top or bottom translates to the additive inverse of
+        the y direction,
+        while hitting the left or right is the additive inverse of
+        the x direction.
+        """
+        yChanged = False
+        xChanged = False
+
+        for brick in bricks:
+            if (self.y > brick.rect.centery and
+                (self.rect.right > brick.rect.x and
+                    self.rect.left < brick.rect.right) and
+                    self.yDir < 0):
+                if not yChanged:
+                    self.setYDirection(-self.yDir)
+                    yChanged = True
+
+            elif (self.y < brick.rect.centery and
+                  (self.rect.right > brick.rect.x and
+                    self.rect.left < brick.rect.right) and
+                    self.yDir > 0):
+                if not yChanged:
+                    self.setYDirection(-self.yDir)
+                    yChanged = True
+
+            elif (self.x > brick.rect.centerx and
+                  (self.rect.bottom > brick.rect.y and
+                    self.rect.top < brick.rect.bottom) and
+                    self.xDir < 0):
+                if not xChanged:
+                    self.setXDirection(-self.xDir)
+                    xChanged = True
+
+            elif (self.x < brick.rect.centerx and
+                  (self.rect.bottom > brick.rect.y and
+                    self.rect.top < brick.rect.bottom) and
+                    self.xDir > 0):
+                if not xChanged:
+                    self.setXDirection(-self.xDir)
+                    xChanged = True
 
     # Set the x direction
     def setXDirection(self, xDir):

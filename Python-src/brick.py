@@ -28,6 +28,7 @@ class Brick(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+
         # Powerup embedded in brick
         if powerup == None:
             self.powerup = None
