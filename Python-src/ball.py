@@ -143,41 +143,35 @@ class Ball(pygame.sprite.Sprite):
         while hitting the left or right is the additive inverse of
         the x direction.
         """
-        yChanged = False
-        xChanged = False
+        brickHit = False
 
         for brick in bricks:
-            if (self.y > brick.rect.centery and
-                (self.rect.right > brick.rect.x and
-                    self.rect.left < brick.rect.right) and
-                    self.yDir < 0):
-                if not yChanged:
+            if not brickHit:
+                if (self.y > brick.rect.centery and
+                    (self.rect.right > brick.rect.x and
+                        self.rect.left < brick.rect.right) and
+                        self.yDir < 0):
                     self.setYDirection(-self.yDir)
-                    yChanged = True
 
-            elif (self.y < brick.rect.centery and
-                  (self.rect.right > brick.rect.x and
-                    self.rect.left < brick.rect.right) and
-                    self.yDir > 0):
-                if not yChanged:
+                elif (self.y < brick.rect.centery and
+                      (self.rect.right > brick.rect.x and
+                        self.rect.left < brick.rect.right) and
+                        self.yDir > 0):
                     self.setYDirection(-self.yDir)
-                    yChanged = True
 
-            elif (self.x > brick.rect.centerx and
-                  (self.rect.bottom > brick.rect.y and
-                    self.rect.top < brick.rect.bottom) and
-                    self.xDir < 0):
-                if not xChanged:
+                elif (self.x > brick.rect.centerx and
+                      (self.rect.bottom > brick.rect.y and
+                        self.rect.top < brick.rect.bottom) and
+                        self.xDir < 0):
                     self.setXDirection(-self.xDir)
-                    xChanged = True
 
-            elif (self.x < brick.rect.centerx and
-                  (self.rect.bottom > brick.rect.y and
-                    self.rect.top < brick.rect.bottom) and
-                    self.xDir > 0):
-                if not xChanged:
+                elif (self.x < brick.rect.centerx and
+                      (self.rect.bottom > brick.rect.y and
+                        self.rect.top < brick.rect.bottom) and
+                        self.xDir > 0):
                     self.setXDirection(-self.xDir)
-                    xChanged = True
+
+            brickHit = True
 
     # Set the x direction
     def setXDirection(self, xDir):
