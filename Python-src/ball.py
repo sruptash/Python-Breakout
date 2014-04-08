@@ -58,7 +58,7 @@ class Ball(pygame.sprite.Sprite):
         self.onPaddle = True
 
     # Move ball
-    def move(self, width, height, seconds, paddleX=None):
+    def move(self, width, height, seconds, paddle=None):
         """
         If ball is on the paddle, move ball according to
         paddle position.
@@ -66,7 +66,7 @@ class Ball(pygame.sprite.Sprite):
         Else, move according to window bounds and speed.
         """
         if self.onPaddle:
-            self.x = paddleX
+            self.x = paddle.x
             self.rect.centerx = self.x
 
         else:
@@ -84,9 +84,8 @@ class Ball(pygame.sprite.Sprite):
                 self.y = 0 + (self.height / 2)
                 self.yDir = -self.yDir
 
-            elif self.y > (height - (self.height / 2)):
-                self.y = height - (self.height / 2)
-                self.yDir = - self.yDir
+            elif self.y > (height - (self.height / 2) - (paddle.height / 2)):
+                return True
 
             # Set ball trajectory
             self.x += self.xDir * (self.xSpeed * seconds)

@@ -39,6 +39,12 @@ class BreakoutMain:
         self.ballLaunched = False
         self.paused = False
 
+        # Life vars
+        self.lives = 3
+        self.lifeRadius = 5
+        self.lifeX = 0 + 5
+        self.lifeY = self.height - 5
+
         self.difficulty = "normal"
         self.score = 0
 
@@ -81,7 +87,7 @@ class BreakoutMain:
         while 1:
             seconds = self.elapsed / 1000.0
 
-            # Redraw where paddle and/or ball used to be
+            # Redraw where paddle and balls used to be
             self.screen.blit(self.level.background,
                              (self.paddle.rect.x, self.paddle.rect.y),
                              self.paddle.rect)
@@ -122,7 +128,28 @@ class BreakoutMain:
             # Move balls onscreen
             if self.ballLaunched:
                 for ball in self.ballSprites:
-                    ball.move(self.width, self.height, seconds)
+                    ballLost = ball.move(self.width, self.height, seconds, self.paddle)
+
+                    # Check if ball went past paddle
+                    if ballLost:
+                        pygame.time.delay(200)
+                        ball.kill()
+                        if not self.ballSprites:
+                            self.mainBall = Ball((self.paddle.x, self.paddle.y),
+                             self.paddle.height)
+                            self.ballSprites.add(self.mainBall)
+                            self.ballLaunched = False
+
+                            # Lose a life
+                            self.lives -= 1
+                            pygame.draw.circle(self.screen,
+                                       (0, 0, 0),
+                                       (self.lifeX + (self.lives*10), self.lifeY),
+                                       self.lifeRadius)
+
+                            # End game if lives are gone
+                            if self.lives < 0:
+                                pass
 
             # Collision detection between ball and paddle
             hitPaddle = pygame.sprite.spritecollide(self.paddle,
@@ -143,6 +170,13 @@ class BreakoutMain:
                                      (brick.rect.x, brick.rect.y),
                                      brick.rect)
 
+            # Redraw lives left
+            if self.lives > 0:
+                for i in range(self.lives):
+                    pygame.draw.circle(self.screen,
+                                       (255, 255, 255),
+                                       (self.lifeX + (i*10), self.lifeY),
+                                       self.lifeRadius)
             # Redraw sprites
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)

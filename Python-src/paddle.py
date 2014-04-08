@@ -56,7 +56,7 @@ class Paddle(pygame.sprite.Sprite):
             self.rect.centerx = self.x
 
             if ball.onPaddle:
-                ball.move(width, height, seconds, self.x)
+                ball.move(width, height, seconds, self)
 
         elif (key == K_LEFT):
             self.x -= self.speed * seconds
@@ -66,4 +66,4 @@ class Paddle(pygame.sprite.Sprite):
             self.rect.centerx = self.x
 
             if ball.onPaddle:
-                ball.move(width, height, seconds, self.x)
+                ball.move(width, height, seconds, self)
