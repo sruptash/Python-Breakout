@@ -25,12 +25,12 @@ class Level():
         self.name = level
 
         # Load background
-        self.background, self.rect = load_image('media/levels/' + level + '/background.png')
+        self.background, self.rect = load_image('Media/levels/' + level + '/background.png')
 
         # Load bricks
         self.brickSprites = pygame.sprite.Group()
 
-        brickFile = open('media/levels/' + level + '/layout.lvl', 'r')
+        brickFile = open('Media/levels/' + level + '/layout.lvl', 'r')
         for line in brickFile:
             brickInfo = line.split()
             brick = Brick(int(brickInfo[1]), int(brickInfo[2]), brickInfo[0])

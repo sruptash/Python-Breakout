@@ -22,7 +22,7 @@ class Paddle(pygame.sprite.Sprite):
 
         # The sprite to load
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('media/paddles/paddle.png', -1)
+        self.image, self.rect = load_image('Media/paddles/paddle.png', -1)
         self.image.convert()
 
         # The starting size for our paddle.
