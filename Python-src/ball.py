@@ -24,9 +24,12 @@ class Ball(pygame.sprite.Sprite):
     """
 
     # Initialize the starting ball
-    def __init__(self, paddleHeight, paddlePos):
+    def __init__(self, position, paddleHeight=None):
         """
         Initialize the ball sprite and position. Starts on paddle.
+
+        This function is also used to spawn additional balls, in case
+        the user gets a powerup granting them so.
         """
 
         # The sprite to load
@@ -38,15 +41,15 @@ class Ball(pygame.sprite.Sprite):
         self.height = self.rect.height
 
         # Initial ball speed
-        self.speed = 5
+        self.speed = 0.8
 
         # Initial ball direction
         self.xDir = 0.0
         self.yDir = 0.0
 
         # Initial position
-        self.x = paddlePos[0]
-        self.y = paddlePos[1] - paddleHeight
+        self.x = position[0]
+        self.y = position[1] - paddleHeight
         self.rect.centerx = self.x
         self.rect.centery = self.y
 
@@ -54,14 +57,98 @@ class Ball(pygame.sprite.Sprite):
         self.onPaddle = True
 
     # Move ball
-    def move(self, paddleX=None):
+    def move(self, width, height, paddleX=None):
         """
         If ball is on the paddle, move ball according to
         paddle position.
 
-        Else, move according to collision and speed.
+        Else, move according to window bounds and speed.
         """
-
         if self.onPaddle:
             self.x = paddleX
             self.rect.centerx = self.x
+
+        else:
+            # X window bounds
+            if self.x < (0 + (self.width / 2)):
+                self.x = 0 + (self.width / 2)
+                self.xDir = -self.xDir
+
+            elif self.x > (width - (self.width / 2)):
+                self.x = width - (self.width / 2)
+                self.xDir = - self.xDir
+
+            # Y window bounds
+            if self.y < (0 + (self.height / 2)):
+                self.y = 0 + (self.height / 2)
+                self.yDir = -self.yDir
+
+            elif self.y > (height - (self.height / 2)):
+                self.y = height - (self.height / 2)
+                self.yDir = - self.yDir
+
+            # Set ball trajectory
+            self.x += self.xDir * self.speed
+            self.y += self.yDir * self.speed
+
+            # Assign to actual rect
+            self.rect.centerx = self.x
+            self.rect.centery = self.y
+
+    # Launches the ball off the paddle
+    def launch(self):
+        """
+        Will only be called once in main to launch beginning ball.
+        """
+        self.onPaddle = False
+        self.yDir = -1.0
+        self.y -= 1
+        self.rect.centery = self.y
+
+    # Ball collision with paddle
+    def paddleCollide(self, paddle):
+        """
+        Ball will bounce and change directory based on where it hits
+        the paddle.
+
+        The middle of the paddle is a perfect angle reflection,
+        While the extremes either decrease or increase the angle
+        of reflection depending on the initial xDir.
+        Regardless, the yDir is the additive inverse upon collision.
+        """
+
+        if self.x != paddle.x:
+            ballDist = self.x - paddle.rect.centerx
+            percent = ballDist / (paddle.width / 2)
+
+            # set a limit for percent
+            if percent < -1.2: percent = -1.2
+            if percent > 1.2: percent = 1.2
+
+            # set x direction
+            self.setXDirection(self.xDir + percent)
+
+        # Always set y direction to negative inverse after paddle collide
+        self.setYDirection(-self.yDir)
+
+    # Set the x direction
+    def setXDirection(self, xDir):
+        """
+        Used when spawning new balls, as well as when a collision is detected
+        between a ball and an object.
+
+        When new ball is spawned from a powerup, new ball will slightly follow
+        trajectory of old ball.
+        """
+        self.xDir = xDir
+
+    # Set the y direction
+    def setYDirection(self, yDir):
+        """
+        Used when spawning new balls, as well as when a collision is detected
+        between a ball and an object.
+
+        When new ball is spawned from a powerup, new ball will slightly follow
+        trajectory of old ball.
+        """
+        self.yDir = yDir

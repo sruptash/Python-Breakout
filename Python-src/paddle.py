@@ -26,12 +26,12 @@ class Paddle(pygame.sprite.Sprite):
         self.image.convert()
 
         # The starting size for our paddle.
-        # Height will always remain 8
+        # Height will always remain the same
         self.width = self.rect.width
         self.height = self.rect.height
 
         # The speed of the paddle
-        self.speed = 15
+        self.speed = 15.0
 
         # Initial position
         self.x = width / 2
@@ -54,7 +54,9 @@ class Paddle(pygame.sprite.Sprite):
                 self.x = width - (self.width / 2)
 
             self.rect.centerx = self.x
-            ball.move(self.x)
+
+            if ball.onPaddle:
+                ball.move(width, height, self.x)
 
         elif (key == K_LEFT):
             self.x -= self.speed
@@ -62,4 +64,6 @@ class Paddle(pygame.sprite.Sprite):
                 self.x = 0 + (self.width / 2)
 
             self.rect.centerx = self.x
-            ball.move(self.x)
+
+            if ball.onPaddle:
+                ball.move(width, height, self.x)

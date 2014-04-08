@@ -25,10 +25,16 @@ class BreakoutMain:
         """
         pygame.init()
 
+        # Screen and window settings
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Breakout!')
+
+        # Game vars
+        self.ballLaunched = False
+        self.difficulty = "normal"
+        self.score = 0
 
     # Used to load sprites to the screen
     def loadSprites(self):
@@ -38,18 +44,21 @@ class BreakoutMain:
         """
 
         # level
-        self.level = Level('level3')
+        self.level = Level('level1')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
-        self.paddleSprite = pygame.sprite.RenderPlain(self.paddle)
+        self.paddleSprite = pygame.sprite.GroupSingle(self.paddle)
 
         # ball
-        self.ball = Ball(self.paddle.height, (self.paddle.x, self.paddle.y))
-        self.ballSprites = pygame.sprite.RenderPlain(self.ball)
+        self.mainBall = Ball((self.paddle.x, self.paddle.y),
+                             self.paddle.height)
+        self.ballSprites = pygame.sprite.RenderPlain(self.mainBall)
 
+        # used to store rects that need updating
+        self.dirty_rects = pygame.sprite.Group()
 
-    # Loop function
+    # MAIN LOOP FUNCTION
     def loop(self):
         """
         Function repeated over and over to check for new events,
@@ -62,8 +71,23 @@ class BreakoutMain:
         # Set key repeat on
         pygame.key.set_repeat(5, 20)
 
+        # Draw background to screen initially
+        self.screen.blit(self.level.background, (0, 0))
+        self.level.brickSprites.draw(self.screen)
+
         while 1:
 
+            # Redraw where paddle and/or ball used to be
+            self.screen.blit(self.level.background,
+                             (self.paddle.rect.x, self.paddle.rect.y),
+                             self.paddle.rect)
+
+            for ball in self.ballSprites:
+                self.screen.blit(self.level.background,
+                                 (ball.rect.x, ball.rect.y),
+                                 ball.rect)
+
+            # Check for events
             for event in pygame.event.get():
                 # Window 'X' clicked
                 if event.type == pygame.QUIT:
@@ -72,25 +96,39 @@ class BreakoutMain:
 
                 # Keys pressed
                 if event.type == KEYDOWN:
+                    # Quit game
                     if event.key == K_ESCAPE or event.key == K_q:
                         pygame.event.post(pygame.event.Event(QUIT))
 
+                    # Move paddle
                     if (event.key == K_LEFT or
-                            event.key == K_RIGHT or
-                            event.key == K_UP or
-                            event.key == K_DOWN):
-                        self.paddle.move(event.key, self.width, self.height, self.ball)
+                            event.key == K_RIGHT):
+                        self.paddle.move(event.key,
+                                         self.width,
+                                         self.height,
+                                         self.mainBall)
 
-            # Collision detection
-            """TODO"""
+                    # Start game by launching the ball
+                    if event.key == K_SPACE:
+                        if not self.ballLaunched:
+                            self.mainBall.launch()
+                            self.ballLaunched = True
 
-            # Redraw background
-            self.screen.blit(self.level.background, (0, 0))
+            # Move balls onscreen
+            if self.ballLaunched:
+                for ball in self.ballSprites:
+                    ball.move(self.width, self.height)
+
+            # Collision detection (balls and objects)
+            hitPaddle = pygame.sprite.spritecollide(self.paddle, self.ballSprites, False)
+
+            if hitPaddle:
+                for ball in hitPaddle:
+                    ball.paddleCollide(self.paddle)
 
             # Redraw sprites
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)
-            self.level.brickSprites.draw(self.screen)
             pygame.display.update()
 
 
