@@ -31,16 +31,16 @@ class Paddle(pygame.sprite.Sprite):
         self.height = self.rect.height
 
         # The speed of the paddle
-        self.speed = 15.0
+        self.speed = 1000.0
 
         # Initial position
-        self.x = width / 2
-        self.y = height - 20
+        self.x = float(width / 2)
+        self.y = float(height - 20)
         self.rect.centerx = self.x
         self.rect.centery = self.y
 
     # Moves the paddle when arrow key left/right are pushed
-    def move(self, key, width, height, ball):
+    def move(self, key, width, height, ball, seconds):
         """
         Key presses will change depending on orientation of the screen.
         Orientation will vary from level to level, so key presses should change
@@ -49,21 +49,21 @@ class Paddle(pygame.sprite.Sprite):
         """
 
         if (key == K_RIGHT):
-            self.x += self.speed
+            self.x += self.speed * seconds
             if self.x > (width - (self.width / 2)):
                 self.x = width - (self.width / 2)
 
             self.rect.centerx = self.x
 
             if ball.onPaddle:
-                ball.move(width, height, self.x)
+                ball.move(width, height, seconds, self.x)
 
         elif (key == K_LEFT):
-            self.x -= self.speed
+            self.x -= self.speed * seconds
             if self.x < (0 + (self.width / 2)):
                 self.x = 0 + (self.width / 2)
 
             self.rect.centerx = self.x
 
             if ball.onPaddle:
-                ball.move(width, height, self.x)
+                ball.move(width, height, seconds, self.x)

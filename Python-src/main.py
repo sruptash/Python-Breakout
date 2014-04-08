@@ -31,8 +31,14 @@ class BreakoutMain:
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Breakout!')
 
+        # Timer settings
+        self.clock = pygame.time.Clock()
+        self.elapsed = 0.0
+
         # Game vars
         self.ballLaunched = False
+        self.paused = False
+
         self.difficulty = "normal"
         self.score = 0
 
@@ -44,7 +50,7 @@ class BreakoutMain:
         """
 
         # level
-        self.level = Level('level1')
+        self.level = Level('level2')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
@@ -76,6 +82,7 @@ class BreakoutMain:
         self.level.brickSprites.draw(self.screen)
 
         while 1:
+            seconds = self.elapsed / 1000.0
 
             # Redraw where paddle and/or ball used to be
             self.screen.blit(self.level.background,
@@ -106,7 +113,8 @@ class BreakoutMain:
                         self.paddle.move(event.key,
                                          self.width,
                                          self.height,
-                                         self.mainBall)
+                                         self.mainBall,
+                                         seconds)
 
                     # Start game by launching the ball
                     if event.key == K_SPACE:
@@ -117,7 +125,7 @@ class BreakoutMain:
             # Move balls onscreen
             if self.ballLaunched:
                 for ball in self.ballSprites:
-                    ball.move(self.width, self.height)
+                    ball.move(self.width, self.height, seconds)
 
             # Collision detection (balls and objects)
             hitPaddle = pygame.sprite.spritecollide(self.paddle, self.ballSprites, False)
@@ -130,6 +138,9 @@ class BreakoutMain:
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)
             pygame.display.update()
+
+            # Keep track of time elapsed
+            self.elapsed = self.clock.tick(60)
 
 
 # Start the game
