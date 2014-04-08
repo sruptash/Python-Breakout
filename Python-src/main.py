@@ -56,7 +56,7 @@ class BreakoutMain:
         """
 
         # level
-        self.level = Level('level2')
+        self.level = Level('level4')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
