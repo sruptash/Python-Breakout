@@ -1,5 +1,6 @@
 import sys, os
 import pygame
+import random
 from pygame.locals import *
 from loaders import *
 
@@ -33,5 +34,39 @@ class Level():
         brickFile = open('Media/levels/' + level + '/layout.lvl', 'r')
         for line in brickFile:
             brickInfo = line.split()
-            brick = Brick(int(brickInfo[1]), int(brickInfo[2]), brickInfo[0])
+
+            # Random powerups, 50% chance of getting a powerup
+            powerup = random.choice('aabbccdeefgggggggggg')
+            
+            # A = growing paddle, 10% chance 
+            if powerup == 'a':
+                powerup = None
+
+            # B = laser, 10% chance
+            elif powerup == 'b':
+                powerup = None
+            
+            # C = multiball, 10% chance
+            elif powerup == 'c':
+                powerup = None
+            
+            # D = extra life, 5% chance
+            elif powerup == 'd':
+                powerup = None
+            
+            # E = shrink, 10% chance
+            elif powerup == 'e':
+                powerup = None
+
+            # F = lose life, 5% chance
+            elif powerup == 'f':
+                powerup = None
+                
+            # G = nothing, 50% chance
+            else:
+                powerup = None
+
+            # Adds brick
+
+            brick = Brick(int(brickInfo[1]), int(brickInfo[2]), brickInfo[0], powerup)
             self.brickSprites.add(brick)

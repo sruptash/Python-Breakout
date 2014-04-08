@@ -18,7 +18,7 @@ class BreakoutMain:
     """
 
     # Initialization function
-    def __init__(self, width=800, height=600):
+    def __init__(self, width=600, height=600):
         """
         Initialize a new window using pygame, with a specified w and h.
         Set the caption as well.

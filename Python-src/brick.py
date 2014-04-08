@@ -15,7 +15,7 @@ class Brick(pygame.sprite.Sprite):
     """
 
     # Initialize the brick
-    def __init__(self, x, y, color, powerup=None):
+    def __init__(self, x, y, color, powerup):
         """
         Initialize the brick sprite and position.
         """
