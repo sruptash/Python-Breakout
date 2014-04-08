@@ -45,8 +45,16 @@ class BreakoutMain:
         self.lifeX = 0 + 5
         self.lifeY = self.height - 5
 
-        self.difficulty = "normal"
+        # Score vars
         self.score = 0
+        self.font = pygame.font.Font(None, 18)
+        self.text = self.font.render("Score: %s" % self.score,
+                                     1,
+                                     (255, 255, 255))
+        self.textpos = self.text.get_rect(bottomright=(self.width,
+                                                       self.height))
+
+        self.difficulty = "normal"
 
     # Used to load sprites to the screen
     def loadSprites(self):
@@ -67,6 +75,34 @@ class BreakoutMain:
                              self.paddle.height)
         self.ballSprites = pygame.sprite.RenderPlain(self.mainBall)
 
+    # Draw score
+    def drawScore(self):
+        """
+        Draws the score to the bottom right of the screen.
+        """
+        self.text = self.font.render("Score: %s" % self.score,
+                                     1,
+                                     (255, 255, 255))
+        self.textpos = self.text.get_rect(bottomright=(self.width,
+                                          self.height))
+        pygame.draw.rect(self.screen,
+                         (0, 0, 0),
+                         self.textpos)
+        self.screen.blit(self.text, self.textpos)
+
+    # Draw lives
+    def drawLives(self):
+        """
+        Draws the number of lives remaining to the bottom left
+        of the screen.
+        """
+        if self.lives > 0:
+                for i in range(self.lives - 1):
+                    pygame.draw.circle(self.screen,
+                                       (255, 255, 255),
+                                       (self.lifeX + (i*10), self.lifeY),
+                                       self.lifeRadius)
+
     # MAIN LOOP FUNCTION
     def loop(self):
         """
@@ -83,6 +119,7 @@ class BreakoutMain:
         # Draw background to screen initially
         self.screen.blit(self.level.background, (0, 0))
         self.level.brickSprites.draw(self.screen)
+        self.screen.blit(self.text, self.textpos)
 
         while 1:
             seconds = self.elapsed / 1000.0
@@ -140,11 +177,12 @@ class BreakoutMain:
                             self.ballSprites.add(self.mainBall)
                             self.ballLaunched = False
 
-                            # Lose a life
+                            # Lose a life, fill in circle where one used to be
                             self.lives -= 1
+                            self.drawScore()
                             pygame.draw.circle(self.screen,
                                        (0, 0, 0),
-                                       (self.lifeX + (self.lives*10), self.lifeY),
+                                       (self.lifeX + ((self.lives - 1)*10), self.lifeY),
                                        self.lifeRadius)
 
                             # End game if lives are gone
@@ -169,14 +207,13 @@ class BreakoutMain:
                     self.screen.blit(self.level.background,
                                      (brick.rect.x, brick.rect.y),
                                      brick.rect)
+                    self.score += 1
+                    # Redraw score
+                    self.drawScore()
 
             # Redraw lives left
-            if self.lives > 0:
-                for i in range(self.lives):
-                    pygame.draw.circle(self.screen,
-                                       (255, 255, 255),
-                                       (self.lifeX + (i*10), self.lifeY),
-                                       self.lifeRadius)
+            self.drawLives()
+
             # Redraw sprites
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)
