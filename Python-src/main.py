@@ -61,7 +61,7 @@ class BreakoutMain:
                                                     (self.width/2,
                                                      self.height/2))
 
-        self.currentLevel = BreakoutMain.levels[1]
+        self.currentLevel = 1
         self.score = 0
         self.difficulty = "normal"
 
@@ -79,7 +79,7 @@ class BreakoutMain:
         """
         # level
         # Background and bricks defined in here
-        self.level = Level(self.currentLevel)
+        self.level = Level(BreakoutMain.levels[self.currentLevel])
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
