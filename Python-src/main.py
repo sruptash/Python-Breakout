@@ -61,7 +61,7 @@ class BreakoutMain:
                                                     (self.width/2,
                                                      self.height/2))
 
-        self.currentLevel = 1
+        self.currentLevel = 2
         self.score = 0
         self.difficulty = "normal"
 
@@ -89,6 +89,12 @@ class BreakoutMain:
         self.mainBall = Ball((self.paddle.x, self.paddle.y),
                              self.paddle.height)
         self.ballSprites = pygame.sprite.RenderPlain(self.mainBall)
+        ball = Ball((self.paddle.x, self.paddle.y),
+                             self.paddle.height)
+        self.ballSprites.add(ball)
+        ball = Ball((self.paddle.x, self.paddle.y),
+                             self.paddle.height)
+        self.ballSprites.add(ball)
 
     # Draw score
     def drawScore(self):
@@ -138,7 +144,61 @@ class BreakoutMain:
             return False
 
         else:
-            return True
+            background = pygame.Surface(self.screen.get_size()).convert()
+            background.fill((0, 0, 0))
+            self.screen.blit(background, (0, 0))
+            
+            mainText = load_text("Breakout!", 48, (255, 255, 255))
+
+            # Message
+            mainTextPos = mainText.get_rect(midtop=(self.width/2,
+                                            0))
+            self.screen.blit(mainText, mainTextPos)
+            
+            mainText = load_text("Type from 1-5 to select level.", 36, (255, 255, 255))
+
+            # Message
+            mainTextPos = mainText.get_rect(midtop=(self.width/2,
+                                            self.height/2))
+            self.screen.blit(mainText, mainTextPos)
+            
+            # Loop
+            while 1:
+                # EVENT CHECKER
+                for event in pygame.event.get():
+                    # Window 'X' clicked
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
+                    # Keys pressed
+                    if event.type == KEYDOWN:
+                        # Quit game
+                        if event.key == K_1:
+                            self.currentLevel = 1
+                            return True
+
+                        if event.key == K_2:
+                            self.currentLevel = 2
+                            return True
+
+                        if event.key == K_3:
+                            self.currentLevel = 3
+                            return True
+                            
+                        if event.key == K_4:
+                            self.currentLevel = 4
+                            return True
+                            
+                        if event.key == K_5:
+                            self.currentLevel = 5
+                            return True
+
+                pygame.display.flip()
+
+                # Keep track of time elapsed
+                self.elapsed = self.clock.tick(60)
+            
 
     # GAME LOOP FUNCTION
     def gameLoop(self, newGame):
@@ -236,17 +296,23 @@ class BreakoutMain:
                     # Move paddle
                     if (event.key == K_LEFT or
                             event.key == K_RIGHT):
-                        self.paddle.move(event.key,
-                                         self.width,
-                                         self.height,
-                                         self.mainBall,
-                                         seconds)
+                        for ball in self.ballSprites:
+                            self.paddle.move(event.key,
+                                             self.width,
+                                             self.height,
+                                             ball,
+                                             seconds)
 
                     # Start game by launching the ball
                     if event.key == K_SPACE:
                         if not self.ballLaunched:
-                            self.mainBall.launch()
+                            for ball in self.ballSprites:
+                                ball.launch()
                             self.ballLaunched = True
+                    
+                    # Go back to menu
+                    if event.key == K_m:
+                        return "menu"
 
 ############# BALL MOVER ###############################
             if self.ballLaunched:
@@ -258,12 +324,17 @@ class BreakoutMain:
 
                     # Check if ball went past paddle
                     if ballLost:
-                        pygame.time.delay(200)
                         ball.kill()
                         if not self.ballSprites:
                             self.mainBall = Ball((self.paddle.x, self.paddle.y),
                                                  self.paddle.height)
                             self.ballSprites.add(self.mainBall)
+                            ball = Ball((self.paddle.x, self.paddle.y),
+                                                 self.paddle.height)
+                            self.ballSprites.add(ball)
+                            ball = Ball((self.paddle.x, self.paddle.y),
+                                                 self.paddle.height)
+                            self.ballSprites.add(ball)
                             self.ballLaunched = False
 
                             # Lose a life, fill in circle where one used to be
@@ -336,81 +407,85 @@ class BreakoutMain:
             -Next Level
         This loop will handle them all accordingly.
         """
-        background = pygame.Surface(self.screen.get_size()).convert()
-        background.fill((0, 0, 0))
-        self.screen.blit(background, (0, 0))
-
-        pygame.time.delay(500)
-
-        # Check state, and change screen accordingly
-        if state == "lost":
-            mainText = load_text("You Lose.", 48, (255, 0, 0))
-        elif state == "won":
-            mainText = load_text("You Won!", 48, (0, 255, 0))
-        elif state == "next":
-            mainText = load_text("Level Completed.", 36, (0, 255, 255))
-
-        # Message
-        mainTextPos = mainText.get_rect(center=(self.width/2,
-                                        self.height/3))
-        self.screen.blit(mainText, mainTextPos)
-
-        if state == "next":
-            scoreText = load_text("Score so far: %s" % self.score,
-                                  36,
-                                  (255, 255, 0))
+        if state == "menu":
+            return False
+        
         else:
-            scoreText = load_text("Final Score: %s" % self.score,
-                                  36,
-                                  (255, 255, 0))
-        # Score
-        scoreTextPos = scoreText.get_rect(center=(self.width/2,
-                                          (self.height/2) - 30))
-        self.screen.blit(scoreText, scoreTextPos)
+            background = pygame.Surface(self.screen.get_size()).convert()
+            background.fill((0, 0, 0))
+            self.screen.blit(background, (0, 0))
 
-        # Controls
-        if state == "next":
-            sText = load_text("Tap 'space' for next level", 24)
-            sTextPos = sText.get_rect(center=(self.width/2,
-                                              (self.height/1.5) - 30))
-            self.screen.blit(sText, sTextPos)
+            pygame.time.delay(500)
 
-        qText = load_text("Tap 'q' to quit", 24)
-        qTextPos = qText.get_rect(center=(self.width/2,
-                                          self.height/1.5))
-        self.screen.blit(qText, qTextPos)
+            # Check state, and change screen accordingly
+            if state == "lost":
+                mainText = load_text("You Lose.", 48, (255, 0, 0))
+            elif state == "won":
+                mainText = load_text("You Won!", 48, (0, 255, 0))
+            elif state == "next":
+                mainText = load_text("Level Completed.", 36, (0, 255, 255))
 
-        mText = load_text("Tap 'm' for main menu", 24)
-        mTextPos = mText.get_rect(center=(self.width/2,
-                                          (self.height/1.5) + 30))
-        self.screen.blit(mText, mTextPos)
+            # Message
+            mainTextPos = mainText.get_rect(center=(self.width/2,
+                                            self.height/3))
+            self.screen.blit(mainText, mainTextPos)
 
-        # Loop
-        while 1:
-            # EVENT CHECKER
-            for event in pygame.event.get():
-                # Window 'X' clicked
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+            if state == "next":
+                scoreText = load_text("Score so far: %s" % self.score,
+                                      36,
+                                      (255, 255, 0))
+            else:
+                scoreText = load_text("Final Score: %s" % self.score,
+                                      36,
+                                      (255, 255, 0))
+            # Score
+            scoreTextPos = scoreText.get_rect(center=(self.width/2,
+                                              (self.height/2) - 30))
+            self.screen.blit(scoreText, scoreTextPos)
 
-                # Keys pressed
-                if event.type == KEYDOWN:
-                    # Quit game
-                    if event.key == K_ESCAPE or event.key == K_q:
-                        pygame.event.post(pygame.event.Event(QUIT))
+            # Controls
+            if state == "next":
+                sText = load_text("Tap 'space' for next level", 24)
+                sTextPos = sText.get_rect(center=(self.width/2,
+                                                  (self.height/1.5) - 30))
+                self.screen.blit(sText, sTextPos)
 
-                    if event.key == K_SPACE:
-                        if state == "next":
-                            return True
+            qText = load_text("Tap 'q' to quit", 24)
+            qTextPos = qText.get_rect(center=(self.width/2,
+                                              self.height/1.5))
+            self.screen.blit(qText, qTextPos)
 
-                    if event.key == K_m:
-                        return False
+            mText = load_text("Tap 'm' for main menu", 24)
+            mTextPos = mText.get_rect(center=(self.width/2,
+                                              (self.height/1.5) + 30))
+            self.screen.blit(mText, mTextPos)
 
-            pygame.display.flip()
+            # Loop
+            while 1:
+                # EVENT CHECKER
+                for event in pygame.event.get():
+                    # Window 'X' clicked
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
 
-            # Keep track of time elapsed
-            self.elapsed = self.clock.tick(60)
+                    # Keys pressed
+                    if event.type == KEYDOWN:
+                        # Quit game
+                        if event.key == K_ESCAPE or event.key == K_q:
+                            pygame.event.post(pygame.event.Event(QUIT))
+
+                        if event.key == K_SPACE:
+                            if state == "next":
+                                return True
+
+                        if event.key == K_m:
+                            return False
+
+                pygame.display.flip()
+
+                # Keep track of time elapsed
+                self.elapsed = self.clock.tick(60)
 
 # Start the game
 if __name__ == "__main__":
