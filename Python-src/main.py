@@ -174,6 +174,9 @@ class BreakoutMain:
                     # Keys pressed
                     if event.type == KEYDOWN:
                         # Quit game
+                        if event.key == K_ESCAPE or event.key == K_q:
+                            pygame.event.post(pygame.event.Event(QUIT))
+                        # Levels
                         if event.key == K_1:
                             self.currentLevel = 1
                             return True
@@ -210,6 +213,7 @@ class BreakoutMain:
         if newGame:
             self.lives = 3
             self.score = 0
+            self.ballLaunched = False
 
         # Load our sprites
         self.loadSprites()
@@ -312,6 +316,9 @@ class BreakoutMain:
                     
                     # Go back to menu
                     if event.key == K_m:
+                        self.ballSprites.empty()
+                        self.paddleSprite.empty()
+                        self.level.brickSprites.empty()
                         return "menu"
 
 ############# BALL MOVER ###############################
@@ -367,18 +374,26 @@ class BreakoutMain:
                     ball.paddleCollide(self.paddle)
 
             # Collision detection between ball and brick
-            for ball in self.ballSprites:
-                hitBricks = pygame.sprite.spritecollide(ball,
-                                                        self.level.brickSprites,
-                                                        True)
-                ball.brickCollide(hitBricks)
-                for brick in hitBricks:
-                    self.screen.blit(self.level.background,
-                                     (brick.rect.x, brick.rect.y),
-                                     brick.rect)
-                    self.score += 1
-                    # Redraw score
-                    self.drawScore()
+            if not self.level.brickSprites:
+                try:
+                    BreakoutMain.levels[self.currentLevel + 1]
+                    self.currentLevel += 1
+                    return "next"
+                except IndexError:
+                    return "won"
+            else:
+                for ball in self.ballSprites:
+                    hitBricks = pygame.sprite.spritecollide(ball,
+                                                            self.level.brickSprites,
+                                                            True)
+                    ball.brickCollide(hitBricks)
+                    for brick in hitBricks:
+                        self.screen.blit(self.level.background,
+                                         (brick.rect.x, brick.rect.y),
+                                         brick.rect)
+                        self.score += 1
+                        # Redraw score
+                        self.drawScore()
 
 ############# SPRITE REFRESH #################################
             # Redraw lives left
