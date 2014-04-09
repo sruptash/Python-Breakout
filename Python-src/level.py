@@ -34,7 +34,7 @@ class Level():
         brickFile = open('Media/levels/' + level + '/layout.lvl', 'r')
         for line in brickFile:
             brickInfo = line.split()
-
+                
             # Random powerups, 50% chance of getting a powerup
             powerup = random.choice('aabbccdeefgggggggggg')
             
@@ -66,7 +66,18 @@ class Level():
             else:
                 powerup = None
 
-            # Adds brick
-
-            brick = Brick(int(brickInfo[1]), int(brickInfo[2]), brickInfo[0], powerup)
-            self.brickSprites.add(brick)
+            # Check for rotation
+            if brickInfo[0] == "rotation":
+                # Rotation vars
+                self.rotated = False
+                if brickInfo[1] == "constant":
+                    self.rotation = 0.0
+                    self.alwaysRotating = True
+                else:
+                    self.rotation = float(brickInfo[1])
+                    self.alwaysRotating = False
+            else:
+                # Adds brick
+                brick = Brick(int(brickInfo[1]), int(brickInfo[2]), brickInfo[0], powerup)
+                self.brickSprites.add(brick)
+                

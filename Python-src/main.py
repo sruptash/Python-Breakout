@@ -61,7 +61,7 @@ class BreakoutMain:
                                                     (self.width/2,
                                                      self.height/2))
 
-        self.currentLevel = BreakoutMain.levels[3]
+        self.currentLevel = BreakoutMain.levels[1]
         self.score = 0
         self.difficulty = "normal"
 
@@ -166,6 +166,12 @@ class BreakoutMain:
 
         while 1:
             seconds = self.elapsed / 1000.0
+            
+            # First rotation hasn't occurred yet
+            if self.level.rotated:
+                rotatedScreen = pygame.transform.rotate(self.screen, -self.level.rotation)
+                self.screen.blit(rotatedScreen, (0, 0))
+
 
             # Redraw where paddle and balls used to be
             self.screen.blit(self.level.background,
@@ -223,7 +229,7 @@ class BreakoutMain:
                                                              ball.rect)
                                         pygame.display.flip()
                                     # Need to update elapsed time, or
-                                    # else ball will end up somewhere
+                                    # else balls will end up somewhere
                                     # wacky.
                                     self.elapsed = self.clock.tick(60)
 
@@ -279,6 +285,13 @@ class BreakoutMain:
                                                     self.ballSprites,
                                                     False)
             if hitPaddle:
+                # For levels that have constant rotation
+                if self.level.alwaysRotating:
+                    if self.level.rotation == 360:
+                        self.level.rotation = 90
+                    else:
+                        self.level.rotation += 90
+                    
                 for ball in hitPaddle:
                     ball.paddleCollide(self.paddle)
 
@@ -296,14 +309,17 @@ class BreakoutMain:
                     # Redraw score
                     self.drawScore()
 
-############# SPRITE DRAW #################################
+############# SPRITE REFRESH #################################
             # Redraw lives left
             self.drawLives()
 
             # Redraw sprites
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)
-            #pygame.transform.rotate(self.screen, 90)
+            if self.level.rotation != 0:
+                rotatedScreen = pygame.transform.rotate(self.screen, self.level.rotation)
+                self.screen.blit(rotatedScreen, (0, 0))
+                self.level.rotated = True
             pygame.display.flip()
 
             # Keep track of time elapsed
@@ -324,13 +340,15 @@ class BreakoutMain:
         background.fill((0, 0, 0))
         self.screen.blit(background, (0, 0))
 
+        pygame.time.delay(500)
+
         # Check state, and change screen accordingly
         if state == "lost":
             mainText = load_text("You Lose.", 48, (255, 0, 0))
         elif state == "won":
             mainText = load_text("You Won!", 48, (0, 255, 0))
         elif state == "next":
-            mainText = load_text("Level Completed.", 36, (0, 255, 0))
+            mainText = load_text("Level Completed.", 36, (0, 255, 255))
 
         # Message
         mainTextPos = mainText.get_rect(center=(self.width/2,
@@ -347,7 +365,7 @@ class BreakoutMain:
                                   (255, 255, 0))
         # Score
         scoreTextPos = scoreText.get_rect(center=(self.width/2,
-                                          self.height/2))
+                                          (self.height/2) - 30))
         self.screen.blit(scoreText, scoreTextPos)
 
         # Controls
