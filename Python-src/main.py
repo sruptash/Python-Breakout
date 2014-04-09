@@ -15,10 +15,28 @@ class BreakoutMain:
     """
     This class is instantiated upon the game being launched.
     This houses information on width, height, and tick rate.
+
+    Note that all loops essential to game function are located
+    near the bottom of this file.
     """
 
+    # Keep a list of all levels used. More levels can be added
+    # by updating this list.
+    # NOTE: "level0" is the menu.
+    levels = ["level0",
+              "level1",
+              "level2",
+              "level3",
+              "level4",
+              "level5"]
+
+    # Here is a tuple with the standard width and height.
+    # Change these to change dimensions of screen.
+    # NOTE: Window is non-resizeable.
+    dimensions = (600, 600)
+
     # Initialization function
-    def __init__(self, width=600, height=600):
+    def __init__(self):
         """
         Initialize a new window using pygame, with a specified w and h.
         Set the caption as well.
@@ -26,8 +44,8 @@ class BreakoutMain:
         pygame.init()
 
         # Screen and window settings
-        self.width = width
-        self.height = height
+        self.width = BreakoutMain.dimensions[0]
+        self.height = BreakoutMain.dimensions[1]
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Breakout!')
 
@@ -45,14 +63,8 @@ class BreakoutMain:
         self.lifeX = 0 + 5
         self.lifeY = self.height - 5
 
-        # Score vars
+        # Score var
         self.score = 0
-        self.font = pygame.font.Font(None, 18)
-        self.text = self.font.render("Score: %s" % self.score,
-                                     1,
-                                     (255, 255, 255))
-        self.textpos = self.text.get_rect(bottomright=(self.width,
-                                                       self.height))
 
         self.difficulty = "normal"
 
@@ -60,11 +72,12 @@ class BreakoutMain:
     def loadSprites(self):
         """
         From here we can load all sprites needed, whether they
-        are the paddle, balls, bricks, powerups/powerdowns, etc.
+        are the paddle, balls, bricks, backgrounds, etc.
         """
 
         # level
-        self.level = Level('level3')
+        # Background and bricks defined in here
+        self.level = Level('level4')
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
@@ -80,15 +93,13 @@ class BreakoutMain:
         """
         Draws the score to the bottom right of the screen.
         """
-        self.text = self.font.render("Score: %s" % self.score,
-                                     1,
-                                     (255, 255, 255))
-        self.textpos = self.text.get_rect(bottomright=(self.width,
-                                          self.height))
+        text = load_text("Score: %s" % self.score, 18)
+        textpos = text.get_rect(bottomright=(self.width,
+                                             self.height))
         pygame.draw.rect(self.screen,
                          (0, 0, 0),
-                         self.textpos)
-        self.screen.blit(self.text, self.textpos)
+                         textpos)
+        self.screen.blit(text, textpos)
 
     # Draw lives
     def drawLives(self):
@@ -103,11 +114,19 @@ class BreakoutMain:
                                        (self.lifeX + (i*10), self.lifeY),
                                        self.lifeRadius)
 
-    # MAIN LOOP FUNCTION
-    def loop(self):
+    # MENU LOOP FUNCTION
+    def menuLoop(self):
         """
-        Function repeated over and over to check for new events,
-        such as key presses or events in game.
+        Function used to give the user a navigatable menu.
+        Once this loop returns, the game begins.
+        """
+        pass
+
+    # GAME LOOP FUNCTION
+    def gameLoop(self):
+        """
+        Function houses a loop that isrepeated over and over to check
+        for new events, such as key presses or events in game.
         """
 
         # Load our sprites
@@ -119,7 +138,7 @@ class BreakoutMain:
         # Draw background to screen initially
         self.screen.blit(self.level.background, (0, 0))
         self.level.brickSprites.draw(self.screen)
-        self.screen.blit(self.text, self.textpos)
+        self.drawScore()
 
         while 1:
             seconds = self.elapsed / 1000.0
@@ -128,13 +147,12 @@ class BreakoutMain:
             self.screen.blit(self.level.background,
                              (self.paddle.rect.x, self.paddle.rect.y),
                              self.paddle.rect)
-
             for ball in self.ballSprites:
                 self.screen.blit(self.level.background,
                                  (ball.rect.x, ball.rect.y),
                                  ball.rect)
 
-            # Check for events
+            # EVENT CHECKER
             for event in pygame.event.get():
                 # Window 'X' clicked
                 if event.type == pygame.QUIT:
@@ -165,7 +183,10 @@ class BreakoutMain:
             # Move balls onscreen
             if self.ballLaunched:
                 for ball in self.ballSprites:
-                    ballLost = ball.move(self.width, self.height, seconds, self.paddle)
+                    ballLost = ball.move(self.width,
+                                         self.height,
+                                         seconds,
+                                         self.paddle)
 
                     # Check if ball went past paddle
                     if ballLost:
@@ -173,7 +194,7 @@ class BreakoutMain:
                         ball.kill()
                         if not self.ballSprites:
                             self.mainBall = Ball((self.paddle.x, self.paddle.y),
-                             self.paddle.height)
+                                                 self.paddle.height)
                             self.ballSprites.add(self.mainBall)
                             self.ballLaunched = False
 
@@ -187,8 +208,9 @@ class BreakoutMain:
 
                             # End game if lives are gone
                             if self.lives < 0:
-                                pass
+                                return "lost"
 
+            # COLLISION DETECTION
             # Collision detection between ball and paddle
             hitPaddle = pygame.sprite.spritecollide(self.paddle,
                                                     self.ballSprites,
@@ -211,6 +233,7 @@ class BreakoutMain:
                     # Redraw score
                     self.drawScore()
 
+            # SPRITE DRAW
             # Redraw lives left
             self.drawLives()
 
@@ -222,8 +245,23 @@ class BreakoutMain:
             # Keep track of time elapsed
             self.elapsed = self.clock.tick(60)
 
+    # END LOOP FUNCTION
+    def endLoop(self, state):
+        """
+        Called when the game reaches an end state.
+        There are 3 possible states:
+            -Game Win
+            -Game Lose
+            -Next Level
+        This loop will handle them all accordingly.
+        """
+        pass
 
 # Start the game
 if __name__ == "__main__":
     mainWindow = BreakoutMain()
-    mainWindow.loop()
+
+    while True:
+        mainWindow.menuLoop()
+        state = mainWindow.gameLoop()
+        mainWindow.endLoop(state)

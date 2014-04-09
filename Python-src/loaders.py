@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 
 
-# Loads the specified image
+# Loads the specified image and returns it
 def load_image(name, colorkey=None):
 
     try:
@@ -24,3 +24,11 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey, RLEACCEL)
 
     return image, image.get_rect()
+
+
+# Loads specific text for the screen
+def load_text(text, size, font=None):
+    font = pygame.font.Font(font, size)
+    loadedText = font.render(text, 1, (255, 255, 255))
+
+    return loadedText
