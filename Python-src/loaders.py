@@ -27,8 +27,11 @@ def load_image(name, colorkey=None):
 
 
 # Loads specific text for the screen
-def load_text(text, size, font=None):
-    font = pygame.font.Font(font, size)
-    loadedText = font.render(text, 1, (255, 255, 255))
+def load_text(text, size, color=None):
+    font = pygame.font.Font(None, size)
+    if color is None:
+        loadedText = font.render(text, 1, (255, 255, 255))
+    else:
+        loadedText = font.render(text, 1, color)
 
     return loadedText

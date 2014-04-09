@@ -56,6 +56,14 @@ class BreakoutMain:
         # Game vars
         self.ballLaunched = False
         self.paused = False
+        self.pauseText = load_text("Paused", 48)
+        self.pauseTextPos = self.pauseText.get_rect(center=
+                                                    (self.width/2,
+                                                     self.height/2))
+
+        self.currentLevel = BreakoutMain.levels[1]
+        self.score = 0
+        self.difficulty = "normal"
 
         # Life vars
         self.lives = 3
@@ -63,21 +71,15 @@ class BreakoutMain:
         self.lifeX = 0 + 5
         self.lifeY = self.height - 5
 
-        # Score var
-        self.score = 0
-
-        self.difficulty = "normal"
-
     # Used to load sprites to the screen
     def loadSprites(self):
         """
         From here we can load all sprites needed, whether they
         are the paddle, balls, bricks, backgrounds, etc.
         """
-
         # level
         # Background and bricks defined in here
-        self.level = Level('level4')
+        self.level = Level(self.currentLevel)
 
         # paddle
         self.paddle = Paddle(self.width, self.height)
@@ -101,6 +103,17 @@ class BreakoutMain:
                          textpos)
         self.screen.blit(text, textpos)
 
+    # Draw level name to screen
+    def drawName(self):
+        """
+        Draws the current level name to the bottom middle
+        of the screen.
+        """
+        text = load_text("%s" % self.level.name, 18)
+        textpos = text.get_rect(midbottom=(self.width/2, self.height))
+
+        self.screen.blit(text, textpos)
+
     # Draw lives
     def drawLives(self):
         """
@@ -115,19 +128,28 @@ class BreakoutMain:
                                        self.lifeRadius)
 
     # MENU LOOP FUNCTION
-    def menuLoop(self):
+    def menuLoop(self, skipMenu):
         """
         Function used to give the user a navigatable menu.
         Once this loop returns, the game begins.
         """
-        pass
+        # Skipping menu means user has progressed to next level
+        if skipMenu:
+            return False
+
+        else:
+            return True
 
     # GAME LOOP FUNCTION
-    def gameLoop(self):
+    def gameLoop(self, newGame):
         """
         Function houses a loop that isrepeated over and over to check
         for new events, such as key presses or events in game.
         """
+        # Reset score and lives if user starting new game
+        if newGame:
+            self.lives = 3
+            self.score = 0
 
         # Load our sprites
         self.loadSprites()
@@ -138,7 +160,9 @@ class BreakoutMain:
         # Draw background to screen initially
         self.screen.blit(self.level.background, (0, 0))
         self.level.brickSprites.draw(self.screen)
+        self.drawLives()
         self.drawScore()
+        self.drawName()
 
         while 1:
             seconds = self.elapsed / 1000.0
@@ -164,6 +188,32 @@ class BreakoutMain:
                     # Quit game
                     if event.key == K_ESCAPE or event.key == K_q:
                         pygame.event.post(pygame.event.Event(QUIT))
+
+                    # Pause game
+                    if event.key == K_p:
+                        pygame.key.set_repeat()
+                        self.paused = True
+
+                        self.screen.blit(self.pauseText, self.pauseTextPos)
+                        pygame.display.update()
+
+                        pygame.event.clear()
+
+                        # If paused, flow control does not leave this
+                        # loop until unpaused.
+                        while self.paused:
+                            for event in pygame.event.get():
+                                if event.type == KEYDOWN:
+                                    # Unpause game
+                                    if event.key == K_p:
+                                        pygame.key.set_repeat(5, 10)
+                                        self.paused = False
+
+                                        self.screen.blit(self.level.background,
+                                                         (self.pauseTextPos.x,
+                                                          self.pauseTextPos.y),
+                                                         self.pauseTextPos)
+                                        pygame.display.update()
 
                     # Move paddle
                     if (event.key == K_LEFT or
@@ -201,13 +251,14 @@ class BreakoutMain:
                             # Lose a life, fill in circle where one used to be
                             self.lives -= 1
                             self.drawScore()
+                            self.drawName()
                             pygame.draw.circle(self.screen,
                                        (0, 0, 0),
                                        (self.lifeX + ((self.lives - 1)*10), self.lifeY),
                                        self.lifeRadius)
 
                             # End game if lives are gone
-                            if self.lives < 0:
+                            if self.lives == 0:
                                 return "lost"
 
             # COLLISION DETECTION
@@ -255,13 +306,87 @@ class BreakoutMain:
             -Next Level
         This loop will handle them all accordingly.
         """
-        pass
+        background = pygame.Surface(self.screen.get_size()).convert()
+        background.fill((0, 0, 0))
+        self.screen.blit(background, (0, 0))
+
+        # Check state, and change screen accordingly
+        if state == "lost":
+            mainText = load_text("You Lose.", 36, (255, 0, 0))
+        elif state == "won":
+            mainText = load_text("You Won!", 36, (0, 255, 0))
+        elif state == "next":
+            mainText = load_text("Level Completed.", 36, (0, 255, 0))
+
+        # Message
+        mainTextPos = mainText.get_rect(center=(self.width/2,
+                                        self.height/3))
+        self.screen.blit(mainText, mainTextPos)
+
+        if state == "next":
+            scoreText = load_text("Score so far: %s" % self.score,
+                                  36,
+                                  (255, 255, 0))
+        else:
+            scoreText = load_text("Final Score: %s" % self.score,
+                                  36,
+                                  (255, 255, 0))
+        # Score
+        scoreTextPos = scoreText.get_rect(center=(self.width/2,
+                                          self.height/2))
+        self.screen.blit(scoreText, scoreTextPos)
+
+        # Controls
+        if state == "next":
+            sText = load_text("Tap 'space' for next level", 24)
+            sTextPos = sText.get_rect(center=(self.width/2,
+                                              (self.height/1.5) - 30))
+            self.screen.blit(sText, sTextPos)
+
+        qText = load_text("Tap 'q' to quit", 24)
+        qTextPos = qText.get_rect(center=(self.width/2,
+                                          self.height/1.5))
+        self.screen.blit(qText, qTextPos)
+
+        mText = load_text("Tap 'm' for main menu", 24)
+        mTextPos = mText.get_rect(center=(self.width/2,
+                                          (self.height/1.5) + 30))
+        self.screen.blit(mText, mTextPos)
+
+        # Loop
+        while 1:
+            # EVENT CHECKER
+            for event in pygame.event.get():
+                # Window 'X' clicked
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                # Keys pressed
+                if event.type == KEYDOWN:
+                    # Quit game
+                    if event.key == K_ESCAPE or event.key == K_q:
+                        pygame.event.post(pygame.event.Event(QUIT))
+
+                    if event.key == K_SPACE:
+                        if state == "next":
+                            return True
+
+                    if event.key == K_m:
+                        return False
+
+            pygame.display.update()
+
+            # Keep track of time elapsed
+            self.elapsed = self.clock.tick(60)
 
 # Start the game
 if __name__ == "__main__":
     mainWindow = BreakoutMain()
 
+    skipMenu = False
+
     while True:
-        mainWindow.menuLoop()
-        state = mainWindow.gameLoop()
-        mainWindow.endLoop(state)
+        newGame = mainWindow.menuLoop(skipMenu)
+        state = mainWindow.gameLoop(newGame)
+        skipMenu = mainWindow.endLoop(state)
