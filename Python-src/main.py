@@ -61,7 +61,7 @@ class BreakoutMain:
                                                     (self.width/2,
                                                      self.height/2))
 
-        self.currentLevel = BreakoutMain.levels[1]
+        self.currentLevel = BreakoutMain.levels[3]
         self.score = 0
         self.difficulty = "normal"
 
@@ -176,7 +176,7 @@ class BreakoutMain:
                                  (ball.rect.x, ball.rect.y),
                                  ball.rect)
 
-            # EVENT CHECKER
+############# EVENT CHECKER ###################################
             for event in pygame.event.get():
                 # Window 'X' clicked
                 if event.type == pygame.QUIT:
@@ -195,7 +195,9 @@ class BreakoutMain:
                         self.paused = True
 
                         self.screen.blit(self.pauseText, self.pauseTextPos)
-                        pygame.display.update()
+                        self.paddleSprite.draw(self.screen)
+                        self.ballSprites.draw(self.screen)
+                        pygame.display.flip()
 
                         pygame.event.clear()
 
@@ -209,11 +211,21 @@ class BreakoutMain:
                                         pygame.key.set_repeat(5, 10)
                                         self.paused = False
 
+                                        # Blit out text and old ball location
                                         self.screen.blit(self.level.background,
                                                          (self.pauseTextPos.x,
                                                           self.pauseTextPos.y),
                                                          self.pauseTextPos)
-                                        pygame.display.update()
+                                        for ball in self.ballSprites:
+                                            self.screen.blit(self.level.background,
+                                                             (ball.rect.x,
+                                                              ball.rect.y),
+                                                             ball.rect)
+                                        pygame.display.flip()
+                                    # Need to update elapsed time, or
+                                    # else ball will end up somewhere
+                                    # wacky.
+                                    self.elapsed = self.clock.tick(60)
 
                     # Move paddle
                     if (event.key == K_LEFT or
@@ -230,7 +242,7 @@ class BreakoutMain:
                             self.mainBall.launch()
                             self.ballLaunched = True
 
-            # Move balls onscreen
+############# BALL MOVER ###############################
             if self.ballLaunched:
                 for ball in self.ballSprites:
                     ballLost = ball.move(self.width,
@@ -261,7 +273,7 @@ class BreakoutMain:
                             if self.lives == 0:
                                 return "lost"
 
-            # COLLISION DETECTION
+############# COLLISION DETECTION ###########################
             # Collision detection between ball and paddle
             hitPaddle = pygame.sprite.spritecollide(self.paddle,
                                                     self.ballSprites,
@@ -284,17 +296,19 @@ class BreakoutMain:
                     # Redraw score
                     self.drawScore()
 
-            # SPRITE DRAW
+############# SPRITE DRAW #################################
             # Redraw lives left
             self.drawLives()
 
             # Redraw sprites
             self.paddleSprite.draw(self.screen)
             self.ballSprites.draw(self.screen)
-            pygame.display.update()
+            #pygame.transform.rotate(self.screen, 90)
+            pygame.display.flip()
 
             # Keep track of time elapsed
             self.elapsed = self.clock.tick(60)
+############################################################
 
     # END LOOP FUNCTION
     def endLoop(self, state):
@@ -312,9 +326,9 @@ class BreakoutMain:
 
         # Check state, and change screen accordingly
         if state == "lost":
-            mainText = load_text("You Lose.", 36, (255, 0, 0))
+            mainText = load_text("You Lose.", 48, (255, 0, 0))
         elif state == "won":
-            mainText = load_text("You Won!", 36, (0, 255, 0))
+            mainText = load_text("You Won!", 48, (0, 255, 0))
         elif state == "next":
             mainText = load_text("Level Completed.", 36, (0, 255, 0))
 
@@ -375,7 +389,7 @@ class BreakoutMain:
                     if event.key == K_m:
                         return False
 
-            pygame.display.update()
+            pygame.display.flip()
 
             # Keep track of time elapsed
             self.elapsed = self.clock.tick(60)
