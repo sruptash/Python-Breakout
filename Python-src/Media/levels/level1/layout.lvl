@@ -13,10 +13,6 @@ red 452 1
 red 493 1
 red 534 1
 red 575 1
-red 616 1
-red 657 1
-red 698 1
-red 739 1
 blue 1 30
 blue 42 30
 blue 83 30
@@ -32,10 +28,6 @@ blue 452 30
 blue 493 30
 blue 534 30
 blue 575 30
-blue 616 30
-blue 657 30
-blue 698 30
-blue 739 30
 green 1 61
 green 42 61
 green 83 61
@@ -51,10 +43,6 @@ green 452 61
 green 493 61
 green 534 61
 green 575 61
-green 616 61
-green 657 61
-green 698 61
-green 739 61
 yellow 1 92
 yellow 42 92
 yellow 83 92
@@ -70,7 +58,3 @@ yellow 452 92
 yellow 493 92
 yellow 534 92
 yellow 575 92
-yellow 616 92
-yellow 657 92
-yellow 698 92
-yellow 739 92
