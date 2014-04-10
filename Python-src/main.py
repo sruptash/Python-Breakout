@@ -2,6 +2,7 @@ import sys, os
 import pygame
 from pygame.locals import *
 
+from powerup import Powerup
 from paddle import Paddle
 from ball import Ball
 from level import Level
