@@ -55,6 +55,7 @@ class BreakoutMain:
         self.elapsed = 0.0
 
         # Game vars
+        self.numBalls = 10
         self.ballLaunched = False
         self.paused = False
         self.pauseText = load_text("Paused", 48)
@@ -90,12 +91,11 @@ class BreakoutMain:
         self.mainBall = Ball((self.paddle.x, self.paddle.y),
                              self.paddle.height)
         self.ballSprites = pygame.sprite.RenderPlain(self.mainBall)
-        ball = Ball((self.paddle.x, self.paddle.y),
-                             self.paddle.height)
-        self.ballSprites.add(ball)
-        ball = Ball((self.paddle.x, self.paddle.y),
-                             self.paddle.height)
-        self.ballSprites.add(ball)
+
+        for i in range(self.numBalls):
+            ball = Ball((self.paddle.x, self.paddle.y),
+                        self.paddle.height)
+            self.ballSprites.add(ball)
 
     # Draw score
     def drawScore(self):
@@ -314,7 +314,7 @@ class BreakoutMain:
                             for ball in self.ballSprites:
                                 ball.launch()
                             self.ballLaunched = True
-                    
+
                     # Go back to menu
                     if event.key == K_m:
                         self.ballSprites.empty()
@@ -337,12 +337,10 @@ class BreakoutMain:
                             self.mainBall = Ball((self.paddle.x, self.paddle.y),
                                                  self.paddle.height)
                             self.ballSprites.add(self.mainBall)
-                            ball = Ball((self.paddle.x, self.paddle.y),
-                                                 self.paddle.height)
-                            self.ballSprites.add(ball)
-                            ball = Ball((self.paddle.x, self.paddle.y),
-                                                 self.paddle.height)
-                            self.ballSprites.add(ball)
+                            for i in range(self.numBalls):
+                                ball = Ball((self.paddle.x, self.paddle.y),
+                                                     self.paddle.height)
+                                self.ballSprites.add(ball)
                             self.ballLaunched = False
 
                             # Lose a life, fill in circle where one used to be
@@ -379,6 +377,10 @@ class BreakoutMain:
                 try:
                     BreakoutMain.levels[self.currentLevel + 1]
                     self.currentLevel += 1
+                    self.ballSprites.empty()
+                    self.paddleSprite.empty()
+                    self.level.brickSprites.empty()
+                    self.ballLaunched = False
                     return "next"
                 except IndexError:
                     return "won"

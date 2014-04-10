@@ -31,7 +31,7 @@ class Paddle(pygame.sprite.Sprite):
         self.height = self.rect.height
 
         # The speed of the paddle
-        self.speed = 1000.0
+        self.speed = 900.0
 
         # Initial position
         self.x = float(width / 2)
@@ -67,3 +67,4 @@ class Paddle(pygame.sprite.Sprite):
 
             if ball.onPaddle:
                 ball.move(width, height, seconds, self)
+
